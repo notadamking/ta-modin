@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
-import pandas as pd
+
+import platform
+
+if platform.system() == 'Windows':
+    import pandas as pd
+else:
+    import modin.pandas as pd
 
 from .momentum import *
 from .others import *
@@ -69,11 +75,11 @@ def add_volatility_ta(df, high, low, close, fillna=False, colprefix=""):
         pandas.core.frame.DataFrame: Dataframe with new features.
     """
     df['{}volatility_atr'.format(colprefix)] = average_true_range(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                n=14,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        n=14,
+        fillna=fillna)
     df['{}volatility_bbh'.format(colprefix)] = bollinger_hband(df[close],
                                                                n=20,
                                                                ndev=2,
@@ -86,33 +92,33 @@ def add_volatility_ta(df, high, low, close, fillna=False, colprefix=""):
                                                               n=20,
                                                               fillna=fillna)
     df['{}volatility_bbhi'.format(colprefix)] = bollinger_hband_indicator(
-                                                                df[close],
-                                                                n=20,
-                                                                ndev=2,
-                                                                fillna=fillna)
+        df[close],
+        n=20,
+        ndev=2,
+        fillna=fillna)
     df['{}volatility_bbli'.format(colprefix)] = bollinger_lband_indicator(
-                                                                df[close],
-                                                                n=20,
-                                                                ndev=2,
-                                                                fillna=fillna)
+        df[close],
+        n=20,
+        ndev=2,
+        fillna=fillna)
     df['{}volatility_kcc'.format(colprefix)] = keltner_channel_central(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                n=10,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        n=10,
+        fillna=fillna)
     df['{}volatility_kch'.format(colprefix)] = keltner_channel_hband(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                n=10,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        n=10,
+        fillna=fillna)
     df['{}volatility_kcl'.format(colprefix)] = keltner_channel_lband(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                n=10,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        n=10,
+        fillna=fillna)
     df['{}volatility_kchi'.format(colprefix)] = \
         keltner_channel_hband_indicator(df[high],
                                         df[low],
@@ -126,13 +132,13 @@ def add_volatility_ta(df, high, low, close, fillna=False, colprefix=""):
                                         n=10,
                                         fillna=fillna)
     df['{}volatility_dch'.format(colprefix)] = donchian_channel_hband(
-                                                                df[close],
-                                                                n=20,
-                                                                fillna=fillna)
+        df[close],
+        n=20,
+        fillna=fillna)
     df['{}volatility_dcl'.format(colprefix)] = donchian_channel_lband(
-                                                                df[close],
-                                                                n=20,
-                                                                fillna=fillna)
+        df[close],
+        n=20,
+        fillna=fillna)
     df['{}volatility_dchi'.format(colprefix)] = \
         donchian_channel_hband_indicator(df[close],
                                          n=20,
@@ -194,17 +200,17 @@ def add_trend_ta(df, high, low, close, fillna=False, colprefix=""):
                                                       n=14,
                                                       fillna=fillna)
     df['{}trend_vortex_ind_pos'.format(colprefix)] = vortex_indicator_pos(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                n=14,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        n=14,
+        fillna=fillna)
     df['{}trend_vortex_ind_neg'.format(colprefix)] = vortex_indicator_neg(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                n=14,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        n=14,
+        fillna=fillna)
     df['{}trend_vortex_diff'.format(colprefix)] = abs(
         df['{}trend_vortex_ind_pos'.format(colprefix)] -
         df['{}trend_vortex_ind_neg'.format(colprefix)])
@@ -238,19 +244,19 @@ def add_trend_ta(df, high, low, close, fillna=False, colprefix=""):
                                                             n2=26, n3=52,
                                                             fillna=fillna)
     df['{}trend_visual_ichimoku_a'.format(colprefix)] = ichimoku_a(
-                                                            df[high],
-                                                            df[low],
-                                                            n1=9,
-                                                            n2=26,
-                                                            visual=True,
-                                                            fillna=fillna)
+        df[high],
+        df[low],
+        n1=9,
+        n2=26,
+        visual=True,
+        fillna=fillna)
     df['{}trend_visual_ichimoku_b'.format(colprefix)] = ichimoku_b(
-                                                                df[high],
-                                                                df[low],
-                                                                n2=26,
-                                                                n3=52,
-                                                                visual=True,
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        n2=26,
+        n3=52,
+        visual=True,
+        fillna=fillna)
     df['{}trend_aroon_up'.format(colprefix)] = aroon_up(df[close], n=25,
                                                         fillna=fillna)
     df['{}trend_aroon_down'.format(colprefix)] = aroon_down(df[close], n=25,
@@ -291,10 +297,10 @@ def add_momentum_ta(df, high, low, close, volume, fillna=False, colprefix=""):
     df['{}momentum_stoch'.format(colprefix)] = stoch(df[high], df[low],
                                                      df[close], fillna=fillna)
     df['{}momentum_stoch_signal'.format(colprefix)] = stoch_signal(
-                                                                df[high],
-                                                                df[low],
-                                                                df[close],
-                                                                fillna=fillna)
+        df[high],
+        df[low],
+        df[close],
+        fillna=fillna)
     df['{}momentum_wr'.format(colprefix)] = wr(df[high], df[low], df[close],
                                                fillna=fillna)
     df['{}momentum_ao'.format(colprefix)] = ao(df[high],

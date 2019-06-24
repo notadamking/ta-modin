@@ -1,9 +1,15 @@
 import numpy as np
-import pandas as pd
+import platform
+
+if platform.system() == 'Windows':
+    import pandas as pd
+else:
+    import modin.pandas as pd
+
 import matplotlib.pyplot as plt
 
 import sys
-sys.path.append("..") # Adds higher directory to python modules path.
+sys.path.append("..")  # Adds higher directory to python modules path.
 from ta import *
 
 # Load data
@@ -12,7 +18,7 @@ df = utils.dropna(df)
 
 # Add all ta features filling nans values
 df = add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume_BTC",
-                            fillna=True)
+                         fillna=True)
 # Generate macd image
 plt.plot(df[40500:41000].trend_macd, label='MACD')
 plt.plot(df[40500:41000].trend_macd_signal, label='MACD Signal')

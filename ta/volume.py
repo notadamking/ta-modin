@@ -8,7 +8,12 @@
 """
 
 import numpy as np
-import pandas as pd
+import platform
+
+if platform.system() == 'Windows':
+    import pandas as pd
+else:
+    import modin.pandas as pd
 
 
 def acc_dist_index(high, low, close, volume, fillna=False):
@@ -163,7 +168,8 @@ def volume_price_trend(close, volume, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    vpt = volume * ((close - close.shift(1, fill_value=close.mean())) / close.shift(1, fill_value=close.mean()))
+    vpt = volume * ((close - close.shift(1, fill_value=close.mean())
+                     ) / close.shift(1, fill_value=close.mean()))
     vpt = vpt.shift(1, fill_value=vpt.mean()) + vpt
     if fillna:
         vpt = vpt.replace([np.inf, -np.inf], np.nan).fillna(0)
@@ -233,7 +239,6 @@ def negative_volume_index(close, volume, fillna=False):
 # TODO
 def put_call_ratio():
     # will need options volumes for this put/call ratio
-
     """Put/Call ratio (PCR)
     https://en.wikipedia.org/wiki/Put/call_ratio
     """

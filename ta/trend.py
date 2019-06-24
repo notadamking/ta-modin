@@ -7,7 +7,12 @@
 
 """
 import numpy as np
-import pandas as pd
+import platform
+
+if platform.system() == 'Windows':
+    import pandas as pd
+else:
+    import modin.pandas as pd
 
 from .utils import *
 
@@ -395,7 +400,8 @@ def trix(close, n=15, fillna=False):
     ema1 = ema(close, n, fillna)
     ema2 = ema(ema1, n, fillna)
     ema3 = ema(ema2, n, fillna)
-    trix = (ema3 - ema3.shift(1, fill_value=ema3.mean())) / ema3.shift(1, fill_value=ema3.mean())
+    trix = (ema3 - ema3.shift(1, fill_value=ema3.mean())) / \
+        ema3.shift(1, fill_value=ema3.mean())
     trix *= 100
     if fillna:
         trix = trix.replace([np.inf, -np.inf], np.nan).fillna(0)
@@ -456,7 +462,8 @@ def cci(high, low, close, n=20, c=0.015, fillna=False):
 
     """
     pp = (high + low + close) / 3.0
-    cci = (pp - pp.rolling(n, min_periods=0).mean()) / (c * pp.rolling(n, min_periods=0).std())
+    cci = (pp - pp.rolling(n, min_periods=0).mean()) / \
+        (c * pp.rolling(n, min_periods=0).std())
     if fillna:
         cci = cci.replace([np.inf, -np.inf], np.nan).fillna(0)
     return pd.Series(cci, name='cci')
@@ -478,7 +485,8 @@ def dpo(close, n=20, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    dpo = close.shift(int((0.5 * n) + 1), fill_value=close.mean()) - close.rolling(n, min_periods=0).mean()
+    dpo = close.shift(int((0.5 * n) + 1), fill_value=close.mean()
+                      ) - close.rolling(n, min_periods=0).mean()
     if fillna:
         dpo = dpo.replace([np.inf, -np.inf], np.nan).fillna(0)
     return pd.Series(dpo, name='dpo_'+str(n))
@@ -581,8 +589,10 @@ def ichimoku_a(high, low, n1=9, n2=26, visual=False, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    conv = 0.5 * (high.rolling(n1, min_periods=0).max() + low.rolling(n1, min_periods=0).min())
-    base = 0.5 * (high.rolling(n2, min_periods=0).max() + low.rolling(n2, min_periods=0).min())
+    conv = 0.5 * (high.rolling(n1, min_periods=0).max() +
+                  low.rolling(n1, min_periods=0).min())
+    base = 0.5 * (high.rolling(n2, min_periods=0).max() +
+                  low.rolling(n2, min_periods=0).min())
 
     spana = 0.5 * (conv + base)
 
@@ -590,7 +600,8 @@ def ichimoku_a(high, low, n1=9, n2=26, visual=False, fillna=False):
         spana = spana.shift(n2, fill_value=spana.mean())
 
     if fillna:
-        spana = spana.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+        spana = spana.replace(
+            [np.inf, -np.inf], np.nan).fillna(method='backfill')
 
     return pd.Series(spana, name='ichimoku_a_'+str(n2))
 
@@ -612,13 +623,15 @@ def ichimoku_b(high, low, n2=26, n3=52, visual=False, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    spanb = 0.5 * (high.rolling(n3, min_periods=0).max() + low.rolling(n3, min_periods=0).min())
+    spanb = 0.5 * (high.rolling(n3, min_periods=0).max() +
+                   low.rolling(n3, min_periods=0).min())
 
     if visual:
         spanb = spanb.shift(n2, fill_value=spanb.mean())
 
     if fillna:
-        spanb = spanb.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+        spanb = spanb.replace(
+            [np.inf, -np.inf], np.nan).fillna(method='backfill')
 
     return pd.Series(spanb, name='ichimoku_b_'+str(n2))
 
@@ -640,7 +653,8 @@ def aroon_up(close, n=25, fillna=False):
         pandas.Series: New feature generated.
 
     """
-    aroon_up = close.rolling(n, min_periods=0).apply(lambda x: float(np.argmax(x) + 1) / n * 100, raw=True)
+    aroon_up = close.rolling(n, min_periods=0).apply(
+        lambda x: float(np.argmax(x) + 1) / n * 100, raw=True)
     if fillna:
         aroon_up = aroon_up.replace([np.inf, -np.inf], np.nan).fillna(0)
     return pd.Series(aroon_up, name='aroon_up'+str(n))
@@ -662,7 +676,8 @@ def aroon_down(close, n=25, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    aroon_down = close.rolling(n, min_periods=0).apply(lambda x: float(np.argmin(x) + 1) / n * 100, raw=True)
+    aroon_down = close.rolling(n, min_periods=0).apply(
+        lambda x: float(np.argmin(x) + 1) / n * 100, raw=True)
     if fillna:
         aroon_down = aroon_down.replace([np.inf, -np.inf], np.nan).fillna(0)
     return pd.Series(aroon_down, name='aroon_down'+str(n))

@@ -1,7 +1,12 @@
-import pandas as pd
+import platform
+
+if platform.system() == 'Windows':
+    import pandas as pd
+else:
+    import modin.pandas as pd
 
 import sys
-sys.path.append("..") # Adds higher directory to python modules path.
+sys.path.append("..")  # Adds higher directory to python modules path.
 from ta import *
 
 # Load data
@@ -15,7 +20,8 @@ print(df.columns)
 # Add adx indicator filling Nans values
 df['adx'] = atr(df['High'], df['Low'], df['Close'], n=14, fillna=True)
 
-import pdb; pdb.set_trace()
+import pdb
+pdb.set_trace()
 
 print(df['adx'])
 

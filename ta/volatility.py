@@ -7,7 +7,12 @@
 
 """
 import numpy as np
-import pandas as pd
+import platform
+
+if platform.system() == 'Windows':
+    import pandas as pd
+else:
+    import modin.pandas as pd
 
 from .utils import *
 
